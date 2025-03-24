@@ -2,6 +2,49 @@ const MAX_CARDS_COLUMN_1 = 4;
 const MAX_CARDS_COLUMN_2 = 6;
 const STORAGE_KEY = 'vue-kanban-data'; // Ключ, под которым хранятся данные в localStorage
 
+Vue.component('task-component', {
+    props: ['item', 'card'], //с  tasks переименовала на item
+    template: `
+        <li>
+            <input type="checkbox" v-model="item.checked" @change="checkAndMoveCard">
+            {{ item.text }}
+        </li>
+    `,
+    methods: {
+        checkAndMoveCard() {
+            this.$emit('check-and-move-card', this.card);
+        }
+    }
+});
+
+Vue.component('card-component', {
+    props: ['card', 'column'],
+    template: `
+        
+    `,
+    methods: {
+        
+    }
+});
+
+Vue.component('column-component', {
+    props: ['column', 'columnIndex'],
+    template: `
+        
+    `,
+    computed: {
+        
+    },
+    methods: {
+         
+    }
+});
+
+
+
+
+
+
 
 new Vue({
     el: '.wrapper',

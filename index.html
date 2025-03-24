@@ -22,10 +22,12 @@
                         {{ card.title }}
                         <div v-if="card.title">
                             <ul>
-                                <li v-for="(item, index) in card.items" :key="index">
-                                    <input type="checkbox" v-model="item.checked" @change="checkAndMoveCard(card)">
-                                    {{ item.text }}
-                                </li>
+                                <task-component
+                                    v-for="(item, index) in card.items"
+                                    :key="index"
+                                    :item="item"
+                                    :card="card"
+                                ></task-component>
                             </ul>
                             <input type="text" v-model="card.newItemText" placeholder="Новый пункт списка">
                             <button @click="addItem(card)">Добавить пункт</button>
@@ -45,10 +47,12 @@
                         {{ card.title }}
                         <div v-if="card.title">
                             <ul>
-                                <li v-for="(item, index) in card.items" :key="index">
-                                    <input type="checkbox" v-model="item.checked" @change="checkAndMoveCard(card)">
-                                    {{ item.text }}
-                                </li>
+                                <task-component
+                                    v-for="(item, index) in card.items"
+                                    :key="index"
+                                    :item="item"
+                                    :card="card"
+                                ></task-component>
                             </ul>
                             <input type="text" v-model="card.newItemText" placeholder="Новый пункт списка">
                             <button @click="addItem(card)">Добавить пункт</button>
@@ -68,10 +72,12 @@
                         {{ card.title }}
                         <div v-if="card.title">
                             <ul>
-                                <li v-for="(item, index) in card.items" :key="index">
-                                    <input type="checkbox" v-model="item.checked" @change="checkAndMoveCard(card)">
-                                    {{ item.text }}
-                                </li>
+                                <task-component
+                                    v-for="(item, index) in card.items"
+                                    :key="index"
+                                    :item="item"
+                                    :card="card"
+                                ></task-component>
                             </ul>
                             <input type="text" v-model="card.newItemText" placeholder="Новый пункт списка">
                             <button @click="addItem(card)">Добавить пункт</button>

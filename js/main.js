@@ -5,11 +5,14 @@ new Vue({
     el: '.wrapper',
     data: {
         cards: [
-            { title: 'Задача 1', column: 1, items: [], newItemText: '' },
-            { title: 'Задача 2', column: 2, items: [], newItemText: '' },
-            { title: 'Задача 3', column: 3, items: [], newItemText: '' }
+            { column: 1, items: [], newItemText: '' },
+            { column: 2, items: [], newItemText: '' },
+            { column: 3, items: [], newItemText: '' }
         ],
-        newItemText: ''
+        newItemText: '',
+        newTaskTitle1: '',
+        newTaskTitle2: '',
+        newTaskTitle3: ''
     },
     computed: {
         column1CardCount() {
@@ -20,17 +23,37 @@ new Vue({
         }
     },
     methods: {
-        addCard: function (column) {
+        addCard: function(column) {
+            let newTaskTitle;
+            if (column === 1) {
+              newTaskTitle = this.newTaskTitle1;
+            } else if (column === 2) {
+              newTaskTitle = this.newTaskTitle2;
+            } else {
+              newTaskTitle = this.newTaskTitle3;
+            }
+          
+            if (newTaskTitle.trim() === '') {
+              alert('Введите название задачи!');
+              return;
+            }
             if (column === 1 && this.column1CardCount >= MAX_CARDS_COLUMN_1) {
-                alert('В первом столбце находится максимальное количество карточек!');
-                return;
+              alert('В первом столбце находится максимальное количество карточек!');
+              return;
             }
             if (column === 2 && this.column2CardCount >= MAX_CARDS_COLUMN_2) {
-                alert('Во втором столбце находится максимальное количество карточек!');
-                return;
+              alert('Во втором столбце находится максимальное количество карточек!');
+              return;
             }
-            this.cards.push({ title: 'Новая задача', column: column, items: [], newItemText: '' });
-        },
+            this.cards.push({ title: newTaskTitle, column: column, items: [], newItemText: '' });
+            if (column === 1) {
+              this.newTaskTitle1 = '';
+            } else if (column === 2) {
+              this.newTaskTitle2 = '';
+            } else {
+              this.newTaskTitle3 = '';
+            }
+          },
         moveCard: function (card, column) {
             if (column === 1 && this.column1CardCount >= MAX_CARDS_COLUMN_1) {
                 alert('В первом столбце находится максимальное количество карточек!');

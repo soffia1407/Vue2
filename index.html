@@ -16,8 +16,15 @@
             <div class="task-column" id="column1">
                 <h3>Нужно сделать</h3>
                 <div class="task-list" id="cards1">
-                    <div v-for="card in cards" v-if="card.column === 1">
+                    <div v-for="card in cards" v-if="card.column === 1" :key="card.id">
                         {{ card.title }}
+                        <ul>
+                            <li v-for="(item, index) in card.items" :key="index">
+                                {{ item.text }}
+                            </li>
+                        </ul>
+                        <input type="text" v-model="card.newItemText" placeholder="Новый пункт списка">
+                        <button @click="addItem(card)">Добавить пункт</button>
                         <button @click="moveCard(card, 2)">В процессе</button>
                         <button @click="moveCard(card, 3)">Завершено</button>
                         <button @click="deleteCard(card)">Удалить</button>
@@ -28,8 +35,15 @@
             <div class="task-column" id="column2">
                 <h3>В процессе</h3>
                 <div class="task-list" id="cards2">
-                    <div v-for="card in cards" v-if="card.column === 2">
+                    <div v-for="card in cards" v-if="card.column === 2" :key="card.id">
                         {{ card.title }}
+                        <ul>
+                            <li v-for="(item, index) in card.items" :key="index">
+                                {{ item.text }}
+                            </li>
+                        </ul>
+                        <input type="text" v-model="card.newItemText" placeholder="Новый пункт списка">
+                        <button @click="addItem(card)">Добавить пункт</button>
                         <button @click="moveCard(card, 1)">Нужно сделать</button>
                         <button @click="moveCard(card, 3)">Завершено</button>
                         <button @click="deleteCard(card)">Удалить</button>
@@ -42,6 +56,13 @@
                 <div class="task-list" id="cards3">
                     <div v-for="card in cards" v-if="card.column === 3" :key="card.id">
                         {{ card.title }}
+                        <ul>
+                            <li v-for="(item, index) in card.items" :key="index">
+                                {{ item.text }}
+                            </li>
+                        </ul>
+                        <input type="text" v-model="card.newItemText" placeholder="Новый пункт списка">
+                        <button @click="addItem(card)">Добавить пункт</button>
                         <button @click="moveCard(card, 1)">Нужно сделать</button>
                         <button @click="moveCard(card, 2)">В процессе</button>
                         <button @click="deleteCard(card)">Удалить</button>

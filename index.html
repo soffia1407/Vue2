@@ -1,11 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Notes</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script defer src="js/vue.min.js"></script>
+    <script defer src="js/main.js"></script>
 </head>
+
 <body>
-    
+    <div class="wrapper">
+        <section class="task-board">
+            <div class="task-column" id="column1">
+                <h3>Нужно сделать</h3>
+                <div class="task-list" id="cards1"></div>
+            </div>
+            <div class="task-column" id="column2">
+                <h3>В процессе</h3>
+                <div class="task-list" id="cards2"></div>
+            </div>
+            <div class="task-column" id="column3">
+                <h3>Завершено</h3>
+                <div class="task-list" id="cards3"></div>
+            </div>
+        </section>
+        
+    </div>
 </body>
+
 </html>

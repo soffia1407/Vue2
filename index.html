@@ -18,6 +18,9 @@
                 <div class="task-list" id="cards1">
                     <div v-for="card in cards" v-if="card.column === 1">
                         {{ card.title }}
+                        <button @click="moveCard(card, 2)">В процессе</button>
+                        <button @click="moveCard(card, 3)">Завершено</button>
+                        <button @click="deleteCard(card)">Удалить</button>
                     </div>
                 </div>
                 <button @click="addCard(1)">Добавить задачу</button>
@@ -27,6 +30,9 @@
                 <div class="task-list" id="cards2">
                     <div v-for="card in cards" v-if="card.column === 2">
                         {{ card.title }}
+                        <button @click="moveCard(card, 1)">Нужно сделать</button>
+                        <button @click="moveCard(card, 3)">Завершено</button>
+                        <button @click="deleteCard(card)">Удалить</button>
                     </div>
                 </div>
                 <button @click="addCard(2)">Добавить задачу</button>
@@ -34,14 +40,17 @@
             <div class="task-column" id="column3">
                 <h3>Завершено</h3>
                 <div class="task-list" id="cards3">
-                    <div v-for="card in cards" v-if="card.column === 3">
+                    <div v-for="card in cards" v-if="card.column === 3" :key="card.id">
                         {{ card.title }}
+                        <button @click="moveCard(card, 1)">Нужно сделать</button>
+                        <button @click="moveCard(card, 2)">В процессе</button>
+                        <button @click="deleteCard(card)">Удалить</button>
                     </div>
                 </div>
                 <button @click="addCard(3)">Добавить задачу</button>
             </div>
         </section>
-        
+
     </div>
 </body>
 

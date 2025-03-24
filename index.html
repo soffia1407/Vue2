@@ -23,6 +23,7 @@
                         <div v-if="card.title">
                             <ul>
                                 <li v-for="(item, index) in card.items" :key="index">
+                                    <input type="checkbox" v-model="item.checked" @change="checkAndMoveCard(card)">
                                     {{ item.text }}
                                 </li>
                             </ul>
@@ -45,6 +46,7 @@
                         <div v-if="card.title">
                             <ul>
                                 <li v-for="(item, index) in card.items" :key="index">
+                                    <input type="checkbox" v-model="item.checked" @change="checkAndMoveCard(card)">
                                     {{ item.text }}
                                 </li>
                             </ul>
@@ -57,16 +59,17 @@
                     </div>
                 </div>
             </div>
-            <div class="task-column" id="column2">
-                <h3>В процессе</h3>
-                <input type="text" v-model="newTaskTitle2" placeholder="Название новой задачи">
-                <button @click="addCard(2)">Добавить задачу</button>
-                <div class="task-list" id="cards2">
-                    <div v-for="card in cards" v-if="card.column === 2" :key="card.id">
+            <div class="task-column" id="column3">
+                <h3>Завершено</h3>
+                <input type="text" v-model="newTaskTitle3" placeholder="Название новой задачи">
+                <button @click="addCard(3)">Добавить задачу</button>
+                <div class="task-list" id="cards3">
+                    <div v-for="card in cards" v-if="card.column === 3" :key="card.id">
                         {{ card.title }}
                         <div v-if="card.title">
                             <ul>
                                 <li v-for="(item, index) in card.items" :key="index">
+                                    <input type="checkbox" v-model="item.checked" @change="checkAndMoveCard(card)">
                                     {{ item.text }}
                                 </li>
                             </ul>
@@ -74,7 +77,7 @@
                             <button @click="addItem(card)">Добавить пункт</button>
                         </div>
                         <button @click="moveCard(card, 1)">Нужно сделать</button>
-                        <button @click="moveCard(card, 3)">Завершено</button>
+                        <button @click="moveCard(card, 2)">В процессе</button>
                         <button @click="deleteCard(card)">Удалить</button>
                     </div>
                 </div>

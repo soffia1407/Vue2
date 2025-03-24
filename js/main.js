@@ -73,9 +73,21 @@ new Vue({
         },
         addItem: function (card) {
             if (card.newItemText.trim() !== '') {
-                card.items.push({ text: card.newItemText });
+                card.items.push({ text: card.newItemText, checked: false }); // Добавляем checked: false
                 card.newItemText = '';
+                this.checkAndMoveCard(card);
             }
         },
+        checkAndMoveCard(card) {
+            const totalItems = card.items.length;
+            const checkedItems = card.items.filter(item => item.checked).length;
+            const percentage = totalItems > 0 ? (checkedItems / totalItems) * 100 : 0;
+
+            if (percentage > 50 && percentage < 100) {
+                this.moveCard(card, 2); // Во второй столбец
+            } else if (percentage === 100) {
+                this.moveCard(card, 3); // В третий столбец
+            }
+        }
     }
 });

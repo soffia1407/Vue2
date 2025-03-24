@@ -1,5 +1,7 @@
-const MAX_CARDS_COLUMN_1 = 3;
-const MAX_CARDS_COLUMN_2 = 5;
+const MAX_CARDS_COLUMN_1 = 4;
+const MAX_CARDS_COLUMN_2 = 6;
+const STORAGE_KEY = 'vue-kanban-data'; // Ключ, под которым хранятся данные в localStorage
+
 
 new Vue({
     el: '.wrapper',
@@ -13,6 +15,15 @@ new Vue({
         newTaskTitle1: '',
         newTaskTitle2: '',
         newTaskTitle3: ''
+    },
+    created() { 
+        this.loadData(); 
+    },
+    watch: {
+        cards: {
+            handler: 'saveData',
+            deep: true
+        }
     },
     computed: {
         column1CardCount() {
@@ -73,7 +84,7 @@ new Vue({
         },
         addItem: function (card) {
             if (card.newItemText.trim() !== '') {
-                card.items.push({ text: card.newItemText, checked: false }); // Добавляем checked: false
+                card.items.push({ text: card.newItemText, checked: false });
                 card.newItemText = '';
                 this.checkAndMoveCard(card);
             }
@@ -84,9 +95,23 @@ new Vue({
             const percentage = totalItems > 0 ? (checkedItems / totalItems) * 100 : 0;
 
             if (percentage > 50 && percentage < 100) {
-                this.moveCard(card, 2); // Во второй столбец
+                this.moveCard(card, 2); 
             } else if (percentage === 100) {
-                this.moveCard(card, 3); // В третий столбец
+                this.moveCard(card, 3); 
+            }
+        },
+        saveData() {
+            const serializedData = JSON.stringify(this.cards); 
+            localStorage.setItem(STORAGE_KEY, serializedData); 
+        },
+        loadData() {
+            const serializedData = localStorage.getItem(STORAGE_KEY); 
+            if (serializedData) {
+                try {
+                    this.cards = JSON.parse(serializedData); 
+                } catch (error) {
+                    console.error('Ошибка при парсинге данных из localStorage:', error);
+                }
             }
         }
     }

@@ -6,5 +6,10 @@ new Vue({
             { title: 'Задача 2', column: 2 },
             { title: 'Задача 3', column: 3 }
         ]
+    },
+    methods: {
+        addCard: function (column) {
+            this.cards.push({ title: 'Новая задача', column: column });
+        }
     }
 });

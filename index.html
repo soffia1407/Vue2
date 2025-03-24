@@ -20,6 +20,7 @@
                         {{ card.title }}
                     </div>
                 </div>
+                <button @click="addCard(1)">Добавить задачу</button>
             </div>
             <div class="task-column" id="column2">
                 <h3>В процессе</h3>
@@ -28,6 +29,7 @@
                         {{ card.title }}
                     </div>
                 </div>
+                <button @click="addCard(2)">Добавить задачу</button>
             </div>
             <div class="task-column" id="column3">
                 <h3>Завершено</h3>
@@ -36,6 +38,7 @@
                         {{ card.title }}
                     </div>
                 </div>
+                <button @click="addCard(3)">Добавить задачу</button>
             </div>
         </section>
         

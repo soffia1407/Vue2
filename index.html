@@ -15,15 +15,27 @@
         <section class="task-board">
             <div class="task-column" id="column1">
                 <h3>Нужно сделать</h3>
-                <div class="task-list" id="cards1"></div>
+                <div class="task-list" id="cards1">
+                    <div v-for="card in cards" v-if="card.column === 1">
+                        {{ card.title }}
+                    </div>
+                </div>
             </div>
             <div class="task-column" id="column2">
                 <h3>В процессе</h3>
-                <div class="task-list" id="cards2"></div>
+                <div class="task-list" id="cards2">
+                    <div v-for="card in cards" v-if="card.column === 2">
+                        {{ card.title }}
+                    </div>
+                </div>
             </div>
             <div class="task-column" id="column3">
                 <h3>Завершено</h3>
-                <div class="task-list" id="cards3"></div>
+                <div class="task-list" id="cards3">
+                    <div v-for="card in cards" v-if="card.column === 3">
+                        {{ card.title }}
+                    </div>
+                </div>
             </div>
         </section>
         

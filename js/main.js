@@ -20,10 +20,50 @@ Vue.component('task-component', {
 Vue.component('card-component', {
     props: ['card', 'column'],
     template: `
-        
+        <div v-for="card in cards" v-if="card.column === 1" :key="card.id">
+            {{ card.title }}
+            <div v-if="card.title">
+                <ul>
+                    <task-component
+                        v-for="(item, index) in card.items"
+                        :key="index"
+                        :item="item"
+                        :card="card"
+                    ></task-component>
+                </ul>
+                <input type="text" v-model="card.newItemText" placeholder="Новый пункт списка">
+                <button @click="addItem(card)">Добавить пункт</button>
+            </div>
+            <button @click="moveCard(card, 2)">В процессе</button>
+            <button @click="moveCard(card, 3)">Завершено</button>
+            <button @click="deleteCard(card)">Удалить</button>
+        </div>
     `,
     methods: {
-        
+        addItem() {
+            if (this.card.newItemText.trim() !== '') {
+                this.card.items.push({ text: this.card.newItemText, checked: false });
+                this.card.newItemText = '';
+                this.checkAndMoveCard(this.card);
+            }
+        },
+        moveCard(column) {
+            this.$emit('move-card', this.card, column);
+        },
+        deleteCard() {
+            this.$emit('delete-card', this.card);
+        },
+        checkAndMoveCard(card) {
+            const totalItems = card.items.length;
+            const checkedItems = card.items.filter(item => item.checked).length;
+            const percentage = totalItems > 0 ? (checkedItems / totalItems) * 100 : 0;
+
+            if (percentage > 50 && percentage < 100) {
+                this.moveCard(2);
+            } else if (percentage === 100) {
+                this.moveCard(3);
+            }
+        }
     }
 });
 
@@ -108,41 +148,6 @@ new Vue({
               this.newTaskTitle3 = '';
             }
           },
-        moveCard: function (card, column) {
-            if (column === 1 && this.column1CardCount >= MAX_CARDS_COLUMN_1) {
-                alert('В первом столбце находится максимальное количество карточек!');
-                return;
-            }
-            if (column === 2 && this.column2CardCount >= MAX_CARDS_COLUMN_2) {
-                alert('Во втором столбце находится максимальное количество карточек!');
-                return;
-            }
-            card.column = column;
-        },
-        deleteCard: function (card) {
-            const index = this.cards.indexOf(card);
-            if (index > -1) {
-                this.cards.splice(index, 1);
-            }
-        },
-        addItem: function (card) {
-            if (card.newItemText.trim() !== '') {
-                card.items.push({ text: card.newItemText, checked: false });
-                card.newItemText = '';
-                this.checkAndMoveCard(card);
-            }
-        },
-        checkAndMoveCard(card) {
-            const totalItems = card.items.length;
-            const checkedItems = card.items.filter(item => item.checked).length;
-            const percentage = totalItems > 0 ? (checkedItems / totalItems) * 100 : 0;
-
-            if (percentage > 50 && percentage < 100) {
-                this.moveCard(card, 2); 
-            } else if (percentage === 100) {
-                this.moveCard(card, 3); 
-            }
-        },
         saveData() {
             const serializedData = JSON.stringify(this.cards); 
             localStorage.setItem(STORAGE_KEY, serializedData); 

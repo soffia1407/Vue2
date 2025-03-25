@@ -12,32 +12,14 @@
 
 <body>
     <div class="wrapper">
-        <section class="task-board">
-            <div class="task-column" id="column1">
-                <h3>Нужно сделать</h3>
-                <input type="text" v-model="newTaskTitle1" placeholder="Название новой задачи">
-                <button @click="addCard(1)">Добавить задачу</button>
-                <div class="task-list" id="cards1">
-                    <div v-for="card in cards" v-if="card.column === 1" :key="card.id">
-                        {{ card.title }}
-                        <div v-if="card.title">
-                            <ul>
-                                <task-component
-                                    v-for="(item, index) in card.items"
-                                    :key="index"
-                                    :item="item"
-                                    :card="card"
-                                ></task-component>
-                            </ul>
-                            <input type="text" v-model="card.newItemText" placeholder="Новый пункт списка">
-                            <button @click="addItem(card)">Добавить пункт</button>
-                        </div>
-                        <button @click="moveCard(card, 2)">В процессе</button>
-                        <button @click="moveCard(card, 3)">Завершено</button>
-                        <button @click="deleteCard(card)">Удалить</button>
-                    </div>
-                </div>
-            </div>
+        <section class="task-board" id="app">
+            <column-component
+                v-for="(column, index) in columns"
+                :key="index"
+                :column="column"
+                :column-index="index"
+            ></column-component>
+                           
             <div class="task-column" id="column2">
                 <h3>В процессе</h3>
                 <input type="text" v-model="newTaskTitle2" placeholder="Название новой задачи">

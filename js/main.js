@@ -1,5 +1,5 @@
-const MAX_CARDS_COLUMN_1 = 4;
-const MAX_CARDS_COLUMN_2 = 6;
+const MAX_CARDS_COLUMN_1 = 3;
+const MAX_CARDS_COLUMN_2 = 5;
 const STORAGE_KEY = 'vue-kanban-data'; // Ключ, под которым хранятся данные в localStorage
 
 Vue.component('task-component', {
@@ -20,7 +20,7 @@ Vue.component('task-component', {
 Vue.component('card-component', {
     props: ['card', 'column'],
     template: `
-        <div v-for="card in cards" v-if="card.column === 1" :key="card.id">
+        <div class="card">
             {{ card.title }}
             <div v-if="card.title">
                 <ul>
@@ -29,14 +29,16 @@ Vue.component('card-component', {
                         :key="index"
                         :item="item"
                         :card="card"
+                        @check-and-move-card="checkAndMoveCard"
                     ></task-component>
                 </ul>
                 <input type="text" v-model="card.newItemText" placeholder="Новый пункт списка">
-                <button @click="addItem(card)">Добавить пункт</button>
+                <button class="add-item-button" @click="addItem">Добавить пункт</button>
             </div>
-            <button @click="moveCard(card, 2)">В процессе</button>
-            <button @click="moveCard(card, 3)">Завершено</button>
-            <button @click="deleteCard(card)">Удалить</button>
+            <button @click="moveCard(1)">Нужно сделать</button>
+            <button @click="moveCard(2)">В процессе</button>
+            <button @click="moveCard(3)">Завершено</button>
+            <button @click="deleteCard">Удалить</button>
         </div>
     `,
     methods: {
@@ -70,37 +72,113 @@ Vue.component('card-component', {
 Vue.component('column-component', {
     props: ['column', 'columnIndex'],
     template: `
-        
+        <div class="task-column" :id="'column' + (Number(columnIndex) + 1)">
+            <h3>{{ getColumnTitle(Number(columnIndex) + 1) }}</h3>
+            <input type="text" v-model="newTaskTitle" :placeholder="'Название новой задачи'">
+            <button @click="addCard">Добавить задачу</button>
+            <div class="task-list" :id="'cards' + (Number(columnIndex) + 1)">
+                <card-component
+                    v-for="card in filteredCards"
+                    :key="card.id"
+                    :card="card"
+                    :column="Number(columnIndex) + 1"
+                    @move-card="moveCard"
+                    @delete-card="deleteCard"
+                    @check-and-move-card="checkAndMoveCard"
+                ></card-component>
+            </div>
+        </div>
     `,
+    data() {
+        return {
+            newTaskTitle: '',
+        };
+    },
     computed: {
-        
+        filteredCards() {
+            return this.$root.cards.filter(card => card.column === Number(this.columnIndex) + 1);
+        },
+        column1CardCount() {
+            return this.$root.cards.filter(card => card.column === 1).length;
+        },
+        column2CardCount() {
+            return this.$root.cards.filter(card => card.column === 2).length;
+        }
     },
     methods: {
-         
+        getColumnTitle(column) {
+            switch (column) {
+                case 1: return 'Нужно сделать';
+                case 2: return 'В процессе';
+                case 3: return 'Завершено';
+                default: return '';
+            }
+        },
+        addCard() {
+            if (this.newTaskTitle.trim() === '') {
+                alert('Введите название задачи!');
+                return;
+            }
+            if (Number(this.columnIndex) === 0 && this.column1CardCount >= MAX_CARDS_COLUMN_1) {
+                alert('В первом столбце находится максимальное количество карточек!');
+                return;
+            }
+            if (Number(this.columnIndex) === 1 && this.column2CardCount >= MAX_CARDS_COLUMN_2) {
+                alert('Во втором столбце находится максимальное количество карточек!');
+                return;
+            }
+            const newCard = {
+                title: this.newTaskTitle,
+                column: Number(this.columnIndex) + 1,
+                items: [],
+                newItemText: ''
+            };
+            this.$root.cards.push(newCard);
+            this.newTaskTitle = '';
+        },
+        moveCard(card, column) {
+            if (column === 1 && this.column1CardCount >= MAX_CARDS_COLUMN_1) {
+                alert('В первом столбце находится максимальное количество карточек!');
+                return;
+            }
+            if (column === 2 && this.column2CardCount >= MAX_CARDS_COLUMN_2) {
+                alert('Во втором столбце находится максимальное количество карточек!');
+                return;
+            }
+            card.column = column;
+        },
+        deleteCard(card) {
+            const index = this.$root.cards.indexOf(card);
+            if (index > -1) {
+                this.$root.cards.splice(index, 1);
+            }
+        },
+        checkAndMoveCard(card) {
+            const totalItems = card.items.length;
+            const checkedItems = card.items.filter(item => item.checked).length;
+            const percentage = totalItems > 0 ? (checkedItems / totalItems) * 100 : 0;
+
+            if (percentage > 50 && percentage < 100) {
+                this.moveCard(2);
+            } else if (percentage === 100) {
+                this.moveCard(3);
+            }
+        }
     }
 });
 
-
-
-
-
-
-
 new Vue({
-    el: '.wrapper',
+    el: '#app',
     data: {
+        columns: [{}, {}, {}],
         cards: [
-            { column: 1, items: [], newItemText: '' },
-            { column: 2, items: [], newItemText: '' },
-            { column: 3, items: [], newItemText: '' }
-        ],
-        newItemText: '',
-        newTaskTitle1: '',
-        newTaskTitle2: '',
-        newTaskTitle3: ''
+            { column: 1, title: 'Задача 1', items: [], newItemText: '' },
+            { column: 2, title: 'Задача 2', items: [], newItemText: '' },
+            { column: 3, title: 'Задача 3', items: [], newItemText: '' }
+        ]
     },
-    created() { 
-        this.loadData(); 
+    created() {
+        this.loadData();
     },
     watch: {
         cards: {
@@ -108,55 +186,16 @@ new Vue({
             deep: true
         }
     },
-    computed: {
-        column1CardCount() {
-            return this.cards.filter(card => card.column === 1).length;
-        },
-        column2CardCount() {
-            return this.cards.filter(card => card.column === 2).length;
-        }
-    },
     methods: {
-        addCard: function(column) {
-            let newTaskTitle;
-            if (column === 1) {
-              newTaskTitle = this.newTaskTitle1;
-            } else if (column === 2) {
-              newTaskTitle = this.newTaskTitle2;
-            } else {
-              newTaskTitle = this.newTaskTitle3;
-            }
-          
-            if (newTaskTitle.trim() === '') {
-              alert('Введите название задачи!');
-              return;
-            }
-            if (column === 1 && this.column1CardCount >= MAX_CARDS_COLUMN_1) {
-              alert('В первом столбце находится максимальное количество карточек!');
-              return;
-            }
-            if (column === 2 && this.column2CardCount >= MAX_CARDS_COLUMN_2) {
-              alert('Во втором столбце находится максимальное количество карточек!');
-              return;
-            }
-            this.cards.push({ title: newTaskTitle, column: column, items: [], newItemText: '' });
-            if (column === 1) {
-              this.newTaskTitle1 = '';
-            } else if (column === 2) {
-              this.newTaskTitle2 = '';
-            } else {
-              this.newTaskTitle3 = '';
-            }
-          },
         saveData() {
-            const serializedData = JSON.stringify(this.cards); 
-            localStorage.setItem(STORAGE_KEY, serializedData); 
+            const serializedData = JSON.stringify(this.cards);
+            localStorage.setItem(STORAGE_KEY, serializedData);
         },
         loadData() {
-            const serializedData = localStorage.getItem(STORAGE_KEY); 
+            const serializedData = localStorage.getItem(STORAGE_KEY);
             if (serializedData) {
                 try {
-                    this.cards = JSON.parse(serializedData); 
+                    this.cards = JSON.parse(serializedData);
                 } catch (error) {
                     console.error('Ошибка при парсинге данных из localStorage:', error);
                 }

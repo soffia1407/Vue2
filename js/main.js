@@ -1,9 +1,9 @@
 const MAX_CARDS_COLUMN_1 = 3;
 const MAX_CARDS_COLUMN_2 = 5;
-const STORAGE_KEY = 'vue-kanban-data'; // Ключ, под которым хранятся данные в localStorage
+const STORAGE_KEY = 'vue-kanban-data';
 
 Vue.component('task-component', {
-    props: ['item', 'card'], //с  tasks переименовала на item
+    props: ['item', 'card'],
     template: `
         <li>
             <input type="checkbox" v-model="item.checked" @change="checkAndMoveCard">
@@ -74,8 +74,11 @@ Vue.component('column-component', {
     template: `
         <div class="task-column" :id="'column' + (Number(columnIndex) + 1)">
             <h3>{{ getColumnTitle(Number(columnIndex) + 1) }}</h3>
-            <input type="text" v-model="newTaskTitle" :placeholder="'Название новой задачи'">
-            <button @click="addCard">Добавить задачу</button>
+            <div v-if="Number(columnIndex) === 0">
+                <input type="text" v-model="newTaskTitle" placeholder="Название новой задачи">
+                <input type="text" v-model="newTaskItem" placeholder="Первый пункт списка (обязательно)">
+                <button @click="addCard">Добавить задачу</button>
+            </div>
             <div class="task-list" :id="'cards' + (Number(columnIndex) + 1)">
                 <card-component
                     v-for="card in filteredCards"
@@ -92,6 +95,7 @@ Vue.component('column-component', {
     data() {
         return {
             newTaskTitle: '',
+            newTaskItem: ''
         };
     },
     computed: {
@@ -119,22 +123,24 @@ Vue.component('column-component', {
                 alert('Введите название задачи!');
                 return;
             }
-            if (Number(this.columnIndex) === 0 && this.column1CardCount >= MAX_CARDS_COLUMN_1) {
+            if (this.newTaskItem.trim() === '') {
+                alert('Добавьте хотя бы один пункт списка!');
+                return;
+            }
+            if (this.column1CardCount >= MAX_CARDS_COLUMN_1) {
                 alert('В первом столбце находится максимальное количество карточек!');
                 return;
             }
-            if (Number(this.columnIndex) === 1 && this.column2CardCount >= MAX_CARDS_COLUMN_2) {
-                alert('Во втором столбце находится максимальное количество карточек!');
-                return;
-            }
+            
             const newCard = {
                 title: this.newTaskTitle,
-                column: Number(this.columnIndex) + 1,
-                items: [],
+                column: 1, // Все новые карточки создаются только в первом столбце
+                items: [{ text: this.newTaskItem, checked: false }],
                 newItemText: ''
             };
             this.$root.cards.push(newCard);
             this.newTaskTitle = '';
+            this.newTaskItem = '';
         },
         moveCard(card, column) {
             if (column === 1 && this.column1CardCount >= MAX_CARDS_COLUMN_1) {
